@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from dotenv import load_dotenv
 from pathlib import Path
+import dj_database_url
 
 load_dotenv()
 
@@ -23,12 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-bjd3@$u%5&*px3h-pv+rt5ad!_f!42wr9e$f6y3x_@s&@8eozg"
+SECRET_KEY = os.getenv('SECRET_KEY', "django-insecure-bjd3@$u%5&*px3h-pv+rt5ad!_f!42wr9e$f6y3x_@s&@8eozg")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.herokuapp.com']
 
 
 # Application definition
@@ -44,7 +45,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',  # 추가
     'corsheaders',
-
 ]
 
 MIDDLEWARE = [
@@ -127,7 +127,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / 'static']  # 이 줄 추가
-STATIC_ROOT = BASE_DIR / 'staticfiles'# 이 줄 추가
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # 이 줄 추가
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -141,14 +141,25 @@ REST_FRAMEWORK = {
     ],
 }
 
+# CORS 설정
 CORS_ALLOW_ALL_ORIGINS = True  # 개발 환경에서만 사용. 프로덕션에서는 특정 origin만 허용해야 합니다.
 
-SECRET_KEY = os.getenv('SECRET_KEY')
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
-
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.herokuapp.com']
-
 CORS_ALLOWED_ORIGINS = [
-    "<http://localhost:3000>",
-    "<https://your-frontend-domain.com>",
+    "http://localhost:3000",
+    "https://your-frontend-domain.com",
 ]
+
+# 프로덕션 설정
+if not DEBUG:
+    SECRET_KEY = os.getenv('SECRET_KEY')
+    DEBUG = os.getenv('DEBUG', 'False') == 'True'
+    ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(',')
+
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:3000",
+        "https://your-frontend-domain.com",
+    ]
+
+    DATABASES = {
+        'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
+    }
