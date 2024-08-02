@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from pathlib import Path
+import dj_database_url
 
 load_dotenv()
 
@@ -9,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', 'default_secret_key_if_missing')
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['.vercel.app']
+ALLOWED_HOSTS = ['.railway.app']
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -105,3 +106,17 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://your-frontend-domain.com",
 ]
+
+if not DEBUG:
+    SECRET_KEY = os.getenv('SECRET_KEY')
+    DEBUG = os.getenv('DEBUG', 'False') == 'True'
+    ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(',')
+
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:3000",
+        "https://your-frontend-domain.com",
+    ]
+
+    DATABASES = {
+        'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
+    }
