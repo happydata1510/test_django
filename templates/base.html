@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}도서 관리 시스템{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <h1>도서 관리 시스템</h1>
+        <nav>
+            <ul>
+                <li><a href="{% url 'books:about' %}">도서관 소개</a></li>
+                <li><a href="{% url 'books:book_list' %}">도서 목록</a></li>
+                {% if user.is_authenticated %}
+                    <li>환영합니다, {{ user.username }}님!</li>
+                    <li><a href="{% url 'logout' %}">로그아웃</a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}">로그인</a></li>
+                    <li><a href="{% url 'signup' %}">회원가입</a></li>
+                {% endif %}
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'books:book_loan' %}">도서 대여</a></li>
+                {% endif %}
+                
+            </ul>
+        </nav>    
+    </header>
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+    <footer>
+        <p>&copy; 2024 도서 관리 시스템</p>
+    </footer>
+</body>
+</html>

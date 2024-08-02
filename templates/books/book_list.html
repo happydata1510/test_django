@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}도서 목록{% endblock %}
+
+{% block content %}
+    <h2>도서 목록</h2>
+    {% if user.is_staff %}
+        <a href="{% url 'books:book_create' %}">새 도서 추가</a>
+    {% endif %}
+
+    <form method="get" action="{% url 'books:book_list' %}">
+        <input type="text" name="q" value="{{ query }}" placeholder="도서 또는 저자 검색">
+        <button type="submit">검색</button>
+    </form>
+
+    {% if books %}
+        <ul>
+        {% for book in books %}
+            <li>
+                <h3><a href="{% url 'books:book_detail' book.pk %}">{{ book.title }}</a></h3>
+                <p>저자: {{ book.author }}</p>
+                <p>출판일: {{ book.publication_date }}</p>
+            </li>
+        {% endfor %}
+        </ul>
+
+        {% if is_paginated %}
+            <div class="pagination">
+                <span class="step-links">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1{% if query %}&q={{ query }}{% endif %}">&laquo; 처음</a>
+                        <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">이전</a>
+                    {% endif %}
+
+                    <span class="current">
+                        {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+                    </span>
+
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">다음</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}">마지막 &raquo;</a>
+                    {% endif %}
+                </span>
+            </div>
+        {% endif %}
+    {% else %}
+        <p>검색 결과가 없습니다.</p>
+    {% endif %}
+
+    <a href="{% url 'books:book_create' %}">새 도서 추가</a>
+{% endblock %}
