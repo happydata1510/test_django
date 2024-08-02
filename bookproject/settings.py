@@ -1,7 +1,6 @@
 import os
 from dotenv import load_dotenv
 from pathlib import Path
-import dj_database_url
 
 load_dotenv()
 
@@ -10,7 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', 'default_secret_key_if_missing')
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.herokuapp.com']
+ALLOWED_HOSTS = ['.vercel.app']
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -19,7 +18,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'books',
+    'books',  # 새로 추가한 앱
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
@@ -106,17 +105,3 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://your-frontend-domain.com",
 ]
-
-if not DEBUG:
-    SECRET_KEY = os.getenv('SECRET_KEY')
-    DEBUG = os.getenv('DEBUG', 'False') == 'True'
-    ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(',')
-
-    CORS_ALLOWED_ORIGINS = [
-        "http://localhost:3000",
-        "https://your-frontend-domain.com",
-    ]
-
-    DATABASES = {
-        'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
-    }
